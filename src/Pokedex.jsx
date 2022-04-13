@@ -43,7 +43,6 @@ class Pokedex extends React.Component {
       }
     })
   }
-
   enable() {
     return this.state.myList.length > 1
   }
@@ -51,21 +50,23 @@ class Pokedex extends React.Component {
     const { myList, current } = this.state
     return (
       <div>
-        <div>
-          {this.getTypes().map(type =>
-            (<button key={ type } onClick={() => this.filterPokemon(type)}>{ type }</button>)
-          )}
-          <button onClick={ () => this.filterPokemon('') }>All</button>
-        </div>
         <div className="pokedex">
           <Pokemon key={ myList[current].id } pokemon={ myList[current] } />
         </div>
         <div>
           <button
+            className="next"
             onClick={ () => this.next() }
             disabled={ !this.enable() }>
             Próximo
           </button>
+        </div>
+        <br />
+        <div>
+          {this.getTypes().map(type =>
+            (<button className={ type } key={ type } onClick={() => this.filterPokemon(type)}>{ type }</button>)
+          )}
+          <button onClick={ () => this.filterPokemon('') } className= "all">All</button>
         </div>
       </div>
     );
