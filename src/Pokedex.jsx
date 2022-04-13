@@ -13,42 +13,63 @@ class Pokedex extends React.Component {
     }
   }
 
+  getTypes() {
+    const types = this.state.pokemons.map(pokemon => pokemon.type);
+    return [...new Set(types)].sort();
+  }
+
   filterPokemon = (filter) => {
+
+    const filteredData = this.state.pokemons.filter(pokemon => {
+      if (filter === '')
+        return true
+      return pokemon.type === filter
+    })
+
     this.setState({
       filter: filter,
-      myList: this.state.pokemons.filter( pokemon => {
-        if( filter === '' ) 
-          return true
-          return pokemon.type = filter
-      })
+      myList: filteredData,
+      current: 0,
     })
   }
 
   next() {
-    this.setState((prevState) => ({
-      current: prevState.current + 1
-    }))
+    this.setState((prevState) => {
+      let nextIndex = prevState.current + 1
+      if (prevState.myList.length - 1 === prevState.current)
+        nextIndex = 0;
+      return {
+        current: nextIndex
+      }
+    })
   }
-    render() {
-      const { myList, current } = this.state
-        return (
-            <div>
-              <div>
-                <button onClick={ () => this.filterPokemon('') }>All</button>
-                <button onClick={ () => this.filterPokemon('Fire') }>Fire</button>
-                <button onClick={ () => this.filterPokemon('Psychic') }>Psychic</button>
-              </div>
-              <div className="pokedex">
-                  <Pokemon key={myList[current].id} pokemon={myList[current]} />
-              </div>
-              <div>
-                <button onClick={ () => this.next() }>
-                  Próximo
-                </button>
-              </div>
-            </div>
-        );
-    }
+
+  enable() {
+    return this.state.myList.length > 1
+  }
+  render() {
+    const { myList, current } = this.state
+    return (
+      <div>
+        <div>
+          {this.getTypes().map(type =>
+            (<button key={ type } onClick={() => this.filterPokemon(type)}>{ type }</button>)
+          )}
+          <button onClick={ () => this.filterPokemon('') }>All</button>
+        </div>
+        <div className="pokedex">
+          <Pokemon key={ myList[current].id } pokemon={ myList[current] } />
+        </div>
+        <div>
+          <button
+            onClick={ () => this.next() }
+            disabled={ !this.enable() }>
+            Próximo
+          </button>
+        </div>
+      </div>
+    );
+  }
 }
 
 export default Pokedex;
